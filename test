@@ -1,0 +1,271 @@
+<template>
+	<view class="content">
+		<u-tabs lineWidth="30" lineColor="#f56c6c" :activeStyle="{
+            color: '#303133',
+            fontWeight: 'bold',
+            transform: 'scale(1.1)'
+        }" :inactiveStyle="{
+            color: '#606266',
+            transform: 'scale(1)' 
+        }" itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;" :list="list" @click="click">
+		</u-tabs>
+			<u-line></u-line>
+		<view class="" v-show="type===0">
+			<view class="container">
+				<view class="form_container">
+					<u-form labelPosition="left" :model="form" ref="form1">
+						<u-form-item label="产品名称:" prop="form.product_name" ref="item1">
+							<u-input v-model="form.product_name" border="surround"></u-input>
+						</u-form-item>
+						<u-form-item label="委托单位:" prop="form.entrust" ref="item1">
+							<u-input v-model="form.entrust" border="surround"></u-input>
+						</u-form-item>
+						<u-form-item label="检测人员:" prop="form.name" ref="item1">
+							<u-input v-model="form.name" border="surround"></u-input>
+						</u-form-item>
+					</u-form>
+				</view>
+				<view class="btn_container">
+					<u-button text="新建" @click="addTask" type="primary"  style="width: 65px;margin-bottom: 15px;">
+					</u-button>
+					<u-button text="重置" style="width: 65px;margin-bottom: 15px;"></u-button>
+					<u-tag text="更多>>>" plain size="mini" type="warning"></u-tag>
+				</view>
+				
+			<!-- 		<view class="xxx">
+						<u-button  @click="preview" style="width: 180px;margin-top: 10px;float: left;" type="primary" text="获取单次任务检测结果">
+						</u-button>
+					</view> -->
+			</view>
+			<u-line></u-line>
+			<view class="" style="overflow: hidden;">
+				<view class="" style="font-size: 12px;">
+					任务设置
+				</view>
+				<view class="result_content">
+					任务内容
+				</view>
+				<view class="task_oprate">
+					<u-button text="新建任务" @click="addTask11" type="primary"  style="width: 65px;margin-bottom: 15px;"></u-button>
+					<u-button text="下发任务" @click="" type="primary"  style="width: 65px;margin-bottom: 15px;"></u-button>
+				</view>
+			</view>
+			<scroll-view class="scrollView" :style="{height:scrollTop+'px'}" scroll-y="true">
+				<view class="" v-for="(item,index) in 100">
+					{{index}}
+				</view>
+			</scroll-view>
+		</view>
+		<view class="" v-show="type===1">
+			<scroll-view scroll-y="true" class="uni_table" :style="{height:scrollTop1+'px'}">
+				<uni-table border stripe emptyText="暂无更多数据">
+					<!-- 表头行 -->
+					<uni-tr>
+						<uni-th width="100" align="center">客户</uni-th>
+						<uni-th align="center">编号</uni-th>
+						<uni-th width="50" align="center">操作</uni-th>
+					</uni-tr>
+					<!-- 表格数据行 -->
+					<!-- <scroll-view>
+					</scroll-view> -->
+					<uni-tr v-for="item in 30" :key="item">
+						<uni-td>2020-10-20</uni-td>
+						<uni-td>Jeson123123</uni-td>
+						<uni-td style="display: flex;">
+							<u-button style="width: 30px;height: 30px;" icon="search"></u-button>
+							<u-button style="width: 30px;height: 30px;" icon="trash-fill"></u-button>
+						</uni-td>
+					</uni-tr>
+				</uni-table>
+			</scroll-view>
+		</view>
+	</view>
+</template>
+<script>
+	export default {
+		data() {
+			return {
+				list: [{
+					name: '检测任务',
+				}, {
+					name: '历史任务',
+				}],
+				form: {
+					product_name: 123,
+					entrust: 'zzzz',
+					name: 'xcasd'
+				},
+				scrollTop: '',
+				scrollTop1: '',
+				type: 0
+			}
+		},
+		methods: {
+			click(e) {
+				this.type = e.index
+			},
+			addTask() {
+				uni.navigateTo({
+					url: '/pages/message/message'
+				});
+			},
+			addTask11(){
+				uni.navigateTo({
+					url: '/pages/addTask/addTask'
+				});
+			},
+			preview() {
+				this.previewFile('https://1078475429-1305898489.cos.ap-nanjing.myqcloud.com/pdftest.pdf', 'pdf')
+			},
+			//文件预览
+			previewFile(url, typeName) {
+				console.log('e =====> 预览', url, 'typeName', typeName);
+				//支持预览的文件类型
+				//微信小程序
+				let fileType = ['doc', 'xls', 'ppt', 'pdf', 'docx', 'xlsx', 'pptx'];
+				// if(!fileType.includes(typeName)) {
+				//   return uni.showToast({
+				//     title: '不支持预览当前文件类型',
+				//     icon: 'none'
+				//   })
+				// }
+				uni.showLoading({
+					title: '加载中',
+					mask: true
+				})
+				// 新开页面打开文档，支持格式：doc, xls, ppt, pdf, docx, xlsx, pptx。
+				// _doc/uniapp_temp_1658110409482/download/pdftest.pdf
+				// 下载文件资源到本地
+				uni.downloadFile({
+					url: url,
+					success: function(res) {
+						console.log('downloadFile ==> ', res)
+						uni.hideLoading();
+						var filePath = res.tempFilePath;
+						if (!fileType.includes(typeName)) {
+							return false;
+						}
+						uni.showLoading({
+							title: '正在打开',
+							mask: true
+						})
+						uni.openDocument({
+							filePath: 'https://1078475429-1305898489.cos.ap-nanjing.myqcloud.com/pdftest.pdf',
+							fileType: typeName, // 文件类型，指定文件类型打开文件，有效值 doc, xls, ppt, pdf, docx, xlsx, pptx 
+							// showMenu: true, // 允许出现分享功能
+							success: res => {
+								uni.hideLoading();
+								console.log('打开文档成功', res);
+							},
+							fail: openError => {
+								uni.hideLoading();
+								console.log('fail:' + JSON.stringify(openError));
+							}
+						});
+					},
+					fail: function(err) {
+						uni.hideLoading();
+						console.log('fail:' + JSON.stringify(err));
+					}
+				});
+			},
+		},
+		onReady() {
+			uni.getSystemInfo({
+				success: (res) => {
+					let titleH = uni.createSelectorQuery().select(".scrollView")
+					titleH.boundingClientRect(data => {
+						console.log(data)
+						//计算高度：元素高度=窗口高度-元素距离顶部的距离（data.top）
+						this.scrollTop = res.windowHeight - data.top
+					}).exec()
+
+					let titleH1 = uni.createSelectorQuery().select(".uni_table")
+					titleH1.boundingClientRect(data => {
+						console.log(data)
+						console.log('------------------')
+						this.scrollTop1 = res.windowHeight - 40
+					}).exec()
+				}
+			})
+		}
+	}
+</script>
+<style lang="scss" scoped>
+	.content {
+		width: 700rpx;
+		margin: 0 auto;
+		/deep/ .u-button{
+			height: 30px;
+		}
+		/deep/ .u-tabs__wrapper__nav{
+			margin-bottom: 5px;
+		}
+		.container {
+			padding: 0 0 0 10px;
+			height: 130px;
+			// border: 1px solid black;
+			margin-top: 10px;
+			box-sizing: border-box;
+
+			// padding: 0 20px;
+			.form_container {
+				width: 520rpx;
+				float: left;
+			}
+			.btn_container {
+				width: 130rpx;
+				height: 130px;
+				float: left;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				margin-left: 8px;
+			}
+			/deep/ .u-input{
+				padding: 2px 9px !important;
+			}
+			/deep/ .u-form-item__body {
+				padding: 5px 0;
+			}
+			/deep/ .u-form-item__body__left__content__label{
+				font-size: 13px;
+			}
+		}
+
+		/deep/ .u-form-item__body__left {
+			width: 66px !important;
+		}
+
+		.result_content {
+			width: 550rpx;
+			height: 60px;
+			border: 1px solid black;
+			margin-top: 8px;
+			text-align: center;
+			line-height: 60px;
+			float: left;
+		}
+		.task_oprate{
+			width: 130rpx;
+			float: right;
+		}
+		.title {
+			display: flex;
+
+		}
+
+		/deep/.uni-table-th {
+			padding: 5px 10px;
+		}
+
+		/deep/ .uni-table {
+			min-width: 700rpx !important;
+		}
+
+		/deep/ .uni-table-td {
+			font-size: 12px;
+		}
+	}
+</style>
