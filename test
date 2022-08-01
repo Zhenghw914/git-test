@@ -1,6 +1,11 @@
 <template>
+<<<<<<< HEAD
 	<view class="content">
 		<u-tabs lineWidth="98" lineColor="#f56c6c" :activeStyle="{
+=======
+
+		<u-tabs lineWidth="30" lineColor="#f56c6c" :activeStyle="{
+>>>>>>> b82626bd9efe35f7612a659f801bdc75e597b49c
             color: '#303133',
             fontWeight: 'bold',
             transform: 'scale(1.1)'
